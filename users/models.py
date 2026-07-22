@@ -1,8 +1,7 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractBaseUser
 from django.db import models
 
-class User(AbstractUser):
-    username = None
+class User(AbstractBaseUser):
 
     email = models.EmailField(max_length=50, verbose_name='Почта', help_text='Введите адрес почты', unique=True)
     telephone = models.CharField(max_length=50, verbose_name='Телефон', help_text='Введите телефон', null=True, blank=True)
@@ -19,4 +18,4 @@ class User(AbstractUser):
 
 
     def __str__(self):
-        return self.username
+        return self.email
