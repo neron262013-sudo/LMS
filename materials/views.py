@@ -1,3 +1,5 @@
-from django.shortcuts import render
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView
 
-# Create your views here.
+from materials.models import Course, Lesson
+from materials.serializers import CourseSerializer, LessonSerializer
