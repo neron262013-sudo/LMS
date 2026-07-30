@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AbstractBaseUser
 from django.db import models
 
+from materials.models import Course, Lesson
+
 
 class User(AbstractBaseUser):
 
@@ -22,3 +24,44 @@ class User(AbstractBaseUser):
 
     def __str__(self):
         return self.email
+
+
+class Payment(models.Model):
+    PAYMENT_METHODS = (
+        ("cash", "Наличные"),
+        ("transfer", "Перевод на счет"),
+    )
+
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, verbose_name="Пользователь", help_text="Укажите пользователя"
+    )
+    course = models.ForeignKey(
+        Course, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Курс", help_text="Укажите курс"
+    )
+    lesson = models.ForeignKey(
+        Lesson, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Урок", help_text="Укажите урок"
+    )
+    payment_date = models.DateField(auto_now_add=True, verbose_name="Дата оплаты", help_text="Укажите дату оплаты")
+    payment_sum = models.DecimalField(
+        max_digits=10, decimal_places=2, verbose_name="Сумма оплаты", help_text="Укажите сумму оплаты"
+    )
+    payment_method = models.CharField(
+        max_length=10, choices=PAYMENT_METHODS, verbose_name="Способ оплаты", help_text="Укажите способ оплаты"
+    )
+
+    class Meta:
+        verbose_name = "Оплата"
+        verbose_name_plural = "Оплаты"
+
+        constraints = [
+            models.CheckConstraint(
+                condition=(
+                    models.Q(course__isnull=False, lesson__isnull=True)
+                    | models.Q(course__isnull=True, lesson__isnull=False)
+                ),
+                name="только курс или урок",
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.user.email} - {self.payment_sum} руб."
