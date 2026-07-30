@@ -7,7 +7,7 @@ class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
         fields = "__all__"
-        
+
 
 class UserSerializer(serializers.ModelSerializer):
     payments = PaymentSerializer(source="payment_set", many=True, read_only=True)

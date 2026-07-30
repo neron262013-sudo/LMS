@@ -1,6 +1,6 @@
 from rest_framework import status
 from rest_framework.generics import CreateAPIView
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
@@ -11,6 +11,9 @@ from users.serializers import PaymentSerializer, UserSerializer
 class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [
+        IsAuthenticated,
+    ]
     http_method_names = ["get", "put", "patch", "delete", "head", "options"]
 
     def create(self, request, *args, **kwargs):
@@ -30,7 +33,9 @@ class PaymentViewSet(ModelViewSet):
 class UserCreateAPIView(CreateAPIView):
     serializer_class = UserSerializer
     queryset = User.objects.all()
-    permission_classes = [AllowAny,]
+    permission_classes = [
+        AllowAny,
+    ]
 
     def perform_create(self, serializer):
         user = serializer.save(is_active=True)
