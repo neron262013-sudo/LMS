@@ -158,3 +158,13 @@ class LessonTestCase(APITestCase):
         self.assertEqual(
             response.json().get("message"), "подписка удалена"
         )
+        wrong_data = {"course_id": 99999}
+        response_404 = self.client.post(url, wrong_data)
+        self.assertEqual(
+            response_404.status_code, status.HTTP_404_NOT_FOUND
+        )
+        self.client.force_authenticate(user=None)
+        response_401 = self.client.post(url, data)
+        self.assertEqual(
+            response_401.status_code, status.HTTP_401_UNAUTHORIZED
+        )
