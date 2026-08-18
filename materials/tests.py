@@ -1,6 +1,7 @@
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
+from django.contrib.auth.models import Group
 
 from materials.models import Lesson, Course
 from users.models import User
@@ -94,6 +95,50 @@ class LessonTestCase(APITestCase):
             data, result
         )
 
+    def test_course_create_by_moderator_forbidden(self):
+        moder_group = Group.objects.create(name="moders")
+        moder_user = User.objects.create_user(email="moder@sky.pro", password="password123")
+        moder_user.groups.add(moder_group)
+
+        self.client.force_authenticate(user=moder_user)
+
+        url = reverse("materials:course-list")
+        data = {
+            "name": "Курс от модератора",
+            "description": "Описание курса"
+        }
+
+        response = self.client.post(url, data)
+        self.assertEqual(
+            response.status_code, status.HTTP_403_FORBIDDEN
+        )
+
+    def test_course_delete_by_moderator_forbidden(self):
+        moder_group = Group.objects.create(name="moders")
+        moder_user = User.objects.create_user(email="moder_del@sky.pro", password="password123")
+        moder_user.groups.add(moder_group)
+
+        self.client.force_authenticate(user=moder_user)
+
+        url = reverse("materials:course-detail", args=(self.course.pk,))
+
+        response = self.client.delete(url)
+        self.assertEqual(
+            response.status_code, status.HTTP_403_FORBIDDEN
+        )
+
+    def test_course_delete_by_not_owner_forbidden(self):
+        other_user = User.objects.create_user(email="other@sky.pro", password="password123")
+
+        self.client.force_authenticate(user=other_user)
+        url = reverse("materials:course-detail", args=(self.course.pk,))
+
+        response = self.client.delete(url)
+        self.assertEqual(
+            response.status_code, status.HTTP_404_NOT_FOUND
+        )
+
+
     def test_course_subscription(self):
         url = reverse("materials:course_subscribe")
         data = {
@@ -113,5 +158,3 @@ class LessonTestCase(APITestCase):
         self.assertEqual(
             response.json().get("message"), "подписка удалена"
         )
-
-
