@@ -1,10 +1,11 @@
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 
 from materials.models import Course, Lesson
+from users.managers import UserManager
 
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
 
     email = models.EmailField(max_length=50, verbose_name="Почта", help_text="Введите адрес почты", unique=True)
     telephone = models.CharField(
@@ -14,6 +15,11 @@ class User(AbstractBaseUser):
     avatar = models.ImageField(
         upload_to="users/avatars", verbose_name="Аватар", help_text="Загрузите ваш аватар", blank=True, null=True
     )
+
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+
+    objects = UserManager()
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
