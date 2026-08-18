@@ -2,7 +2,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from materials.models import Lesson
+from materials.models import Lesson, Course
 from users.models import User
 
 
@@ -10,6 +10,7 @@ class LessonTestCase(APITestCase):
 
     def setUp(self):
         self.user = User.objects.create_user(email="admin@sky.pro", password="password123")
+        self.course = Course.objects.create(name="Курс 1", owner=self.user)
         self.lesson = Lesson.objects.create(name="Урок 1", owner=self.user,
                                             video_url="https://youtube.com")
         self.client.force_authenticate(user=self.user)
@@ -92,3 +93,25 @@ class LessonTestCase(APITestCase):
         self.assertEqual(
             data, result
         )
+
+    def test_course_subscription(self):
+        url = reverse("materials:course_subscribe")
+        data = {
+            "course_id": self.course.pk
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(
+            response.status_code, status.HTTP_201_CREATED
+        )
+        self.assertEqual(
+            response.json().get("message"), "подписка добавлена"
+        )
+        response = self.client.post(url, data)
+        self.assertEqual(
+            response.status_code, status.HTTP_200_OK
+        )
+        self.assertEqual(
+            response.json().get("message"), "подписка удалена"
+        )
+
+
