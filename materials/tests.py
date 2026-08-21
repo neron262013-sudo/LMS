@@ -11,7 +11,7 @@ class LessonTestCase(APITestCase):
 
     def setUp(self):
         self.user = User.objects.create_user(email="admin@sky.pro", password="password123")
-        self.course = Course.objects.create(name="Курс 1", owner=self.user)
+        self.course = Course.objects.create(name="Курс 1", owner=self.user, price=1000)
         self.lesson = Lesson.objects.create(name="Урок 1", owner=self.user,
                                             video_url="https://youtube.com")
         self.client.force_authenticate(user=self.user)
