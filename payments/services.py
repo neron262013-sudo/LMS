@@ -1,4 +1,6 @@
-from stripe import StripeClient
+from rest_framework.serializers import ValidationError
+from stripe import StripeClient, StripeError
+
 from config.settings import STRIPE_API_KEY, STRIPE_SUCCESS_URL
 
 client = StripeClient(STRIPE_API_KEY)
@@ -29,6 +31,9 @@ def create_stripe_session(price_id):
     return session.id, session.url
 
 def create_payment_session(course):
-    product = create_stripe_product(course.name)
-    price = create_stripe_price(product.id, course.price)
-    return create_stripe_session(price.id)
+    try:
+        product = create_stripe_product(course.name)
+        price = create_stripe_price(product.id, course.price)
+        return create_stripe_session(price.id)
+    except StripeError as error:
+        raise ValidationError(f"Ошибка Stripe: {error}")
