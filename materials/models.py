@@ -20,6 +20,10 @@ class Course(models.Model):
         verbose_name="Автор",
         help_text="Укажите автора курса",
     )
+    price = models.PositiveIntegerField(
+        verbose_name="Цена",
+        help_text="Укажите цену курса",
+    )
 
     class Meta:
         verbose_name = "Курс"
