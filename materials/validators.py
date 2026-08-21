@@ -8,11 +8,7 @@ def validate_forbidden_links(value: str) -> str:
         if word.startswith(("http://", "https://", "www.")):
             url = word if "://" in word else f"https://{word}"
             hostname = (urlparse(url).hostname or "").lower()
-            allowed = (
-                hostname == "youtube.com"
-                or hostname.endswith(".youtube.com")
-                or hostname == "youtu.be"
-            )
+            allowed = hostname == "youtube.com" or hostname.endswith(".youtube.com") or hostname == "youtu.be"
             if not allowed:
                 raise ValidationError("Разрешены ссылки только на YouTube")
     return value

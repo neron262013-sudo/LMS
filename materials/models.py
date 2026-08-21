@@ -76,19 +76,16 @@ class Subscription(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         verbose_name="Пользователь",
-        help_text="Укажите пользователя подписки"
+        help_text="Укажите пользователя подписки",
     )
     course = models.ForeignKey(
-        'Course',
-        on_delete=models.CASCADE,
-        verbose_name="Курс",
-        help_text="Укажите курс подписки"
+        "Course", on_delete=models.CASCADE, verbose_name="Курс", help_text="Укажите курс подписки"
     )
 
     class Meta:
         verbose_name = "Подписка"
         verbose_name_plural = "Подписки"
-        unique_together = ('user', 'course')
+        unique_together = ("user", "course")
 
     def __str__(self):
         return f"{self.user} - {self.course}"
