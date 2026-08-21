@@ -23,13 +23,15 @@ class Payment(models.Model):
                              blank=True,
                              null=True,
                              verbose_name='Пользователь',
-                             help_text='Укажите пользователя')
+                             help_text='Укажите пользователя',
+                             related_name="stripe_payments")
     course = models.ForeignKey(Course,
                                on_delete=models.SET_NULL,
                                blank=True,
                                null=True,
                                verbose_name='Курс',
-                               help_text='Укажите курс')
+                               help_text='Укажите курс',
+                               related_name="stripe_payments")
 
     class Meta:
         verbose_name = "Платеж"
