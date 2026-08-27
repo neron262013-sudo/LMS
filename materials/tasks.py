@@ -1,8 +1,11 @@
 from celery import shared_task
 from django.conf import settings
 from django.core.mail import send_mail
+from django.utils import timezone
+from datetime import timedelta
 
 from materials.models import Course, Subscription
+from users.models import User
 
 
 @shared_task
@@ -20,3 +23,15 @@ def send_mail_about_course_update(course_id):
             from_email=settings.EMAIL_HOST_USER,
             recipient_list=[subscription.user.email],
         )
+
+
+@shared_task
+def check_inactive_users():
+    today = timezone.localdate()
+    users = User.objects.all()
+    for user in users:
+        if user.last_login and user.is_active:
+            inactive = today - user.last_login.date()
+            if inactive > timedelta(days=30):
+                user.is_active = False
+                user.save()
