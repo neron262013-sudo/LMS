@@ -7,3 +7,6 @@ django-filter==26.1
 djangorestframework_simplejwt==5.5.1
 drf-yasg==1.21.15
 stripe==15.5.1
+celery==5.6.3
+redis==8.1.0
+django-celery-beat==2.9.0
