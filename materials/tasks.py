@@ -29,10 +29,11 @@ def send_mail_about_course_update(course_id):
 @shared_task
 def check_inactive_users():
     today = timezone.localdate()
-    users = User.objects.all()
+    users = User.objects.filter(is_active=True, last_login__isnull=False)
+    users_to_deactivate = []
     for user in users:
-        if user.last_login and user.is_active:
-            inactive = today - user.last_login.date()
-            if inactive > timedelta(days=30):
-                user.is_active = False
-                user.save()
+        inactive = today - user.last_login.date()
+        if inactive > timedelta(days=30):
+            users_to_deactivate.append(user.pk)
+
+    User.objects.filter(pk__in=users_to_deactivate).update(is_active=False)
