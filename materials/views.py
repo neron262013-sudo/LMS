@@ -9,6 +9,7 @@ from rest_framework.viewsets import ModelViewSet
 from materials.models import Course, Lesson, Subscription
 from materials.paginators import CustomPagination
 from materials.serializers import CourseSerializer, LessonSerializer
+from materials.tasks import send_mail_about_course_update
 from users.permissions import IsModer, IsOwner
 
 
@@ -56,6 +57,10 @@ class CourseViewSet(ModelViewSet):
             return Course.objects.all()
 
         return Course.objects.filter(owner=user)
+
+    def perform_update(self, serializer):
+        course = serializer.save()
+        send_mail_about_course_update.delay(course.id)
 
 
 class LessonCreateApiView(CreateAPIView):
