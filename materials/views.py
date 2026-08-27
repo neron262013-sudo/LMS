@@ -1,14 +1,14 @@
+from django.shortcuts import get_object_or_404
+from rest_framework import status
 from rest_framework.generics import CreateAPIView, DestroyAPIView, ListAPIView, RetrieveAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.views import APIView
-from rest_framework import status
 from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
+from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
 
 from materials.models import Course, Lesson, Subscription
-from materials.serializers import CourseSerializer, LessonSerializer
 from materials.paginators import CustomPagination
+from materials.serializers import CourseSerializer, LessonSerializer
 from users.permissions import IsModer, IsOwner
 
 
@@ -103,6 +103,7 @@ class SubscriptionAPIView(APIView):
     """
     Контроллер для управления подпиской пользователя на обновления курса
     """
+
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
@@ -113,12 +114,12 @@ class SubscriptionAPIView(APIView):
 
         if subs_item.exists():
             subs_item.delete()
-            message = 'подписка удалена'
+            message = "подписка удалена"
             status_code = status.HTTP_200_OK
 
         else:
             Subscription.objects.create(user=user, course=course_item)
-            message = 'подписка добавлена'
+            message = "подписка добавлена"
             status_code = status.HTTP_201_CREATED
 
         return Response({"message": message}, status=status_code)

@@ -27,6 +27,8 @@ INSTALLED_APPS = [
     "materials",
     "django_filters",
     "rest_framework_simplejwt",
+    "drf_yasg",
+    "payments",
 ]
 
 MIDDLEWARE = [
@@ -127,3 +129,7 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 AUTH_USER_MODEL = "users.User"
+
+STRIPE_API_KEY = os.getenv("STRIPE_API_KEY")
+
+STRIPE_SUCCESS_URL = os.getenv("STRIPE_SUCCESS_URL")
