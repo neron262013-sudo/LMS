@@ -31,3 +31,5 @@ RUN mkdir -p /app/media /app/staticfiles
 
 # Открываем порт 8000 для взаимодействия с приложением
 EXPOSE 8000
+
+CMD ["sh", "-c", "python manage.py collectstatic --noinput && guincorn config.wsgi:application --bind 0.0.0.0:8000"]
