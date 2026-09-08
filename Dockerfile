@@ -19,16 +19,15 @@ RUN apt-get update \
 
 # Копируем файл с зависимостями и устанавливаем их
 COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt
 
 # Копируем остальные файлы проекта в контейнер
 COPY . .
 
 # Создаем директорию для медиа
-RUN mkdir -p /app/media
+RUN mkdir -p /app/media /app/staticfiles
 
 # Открываем порт 8000 для взаимодействия с приложением
 EXPOSE 8000
-
-# Определяем команду для запуска приложения
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
